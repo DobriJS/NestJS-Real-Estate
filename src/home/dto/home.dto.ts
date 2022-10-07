@@ -40,6 +40,7 @@ export class HomeResponseDto {
         return this.landSize ;
     }
 
+    image: string;
     propertyType: PropertyType;
 
     @Exclude()
