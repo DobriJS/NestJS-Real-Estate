@@ -32,4 +32,10 @@ export class HomeController {
     getHome(@Param('id', ParseIntPipe) id: number) {
         return this.homeService.getHomeById(id);
     }
+
+    @Post()
+    createHome() {
+        return {};
+    }
+
 }

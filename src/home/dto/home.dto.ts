@@ -1,5 +1,6 @@
 import { PropertyType } from "@prisma/client"
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsPositive, IsString, ValidateNested } from "class-validator";
 
 export class HomeResponseDto {
     id: number;
@@ -8,7 +9,7 @@ export class HomeResponseDto {
     @Exclude()
     number_of_bedrooms: number;
 
-    @Expose({name: 'numberOfBedrooms'})
+    @Expose({ name: 'numberOfBedrooms' })
     numberOfBedrooms() {
         return this.number_of_bedrooms;
     }
@@ -16,7 +17,7 @@ export class HomeResponseDto {
     @Exclude()
     number_of_bathrooms: number;
 
-    @Expose({name: 'numberOfBathrooms'})
+    @Expose({ name: 'numberOfBathrooms' })
     numberOfBathrooms() {
         return this.number_of_bathrooms;
     }
@@ -27,7 +28,7 @@ export class HomeResponseDto {
     @Exclude()
     listed_date: Date;
 
-    @Expose({name: 'listedDate'})
+    @Expose({ name: 'listedDate' })
     listedDate() {
         return this.listedDate;
     }
@@ -35,9 +36,9 @@ export class HomeResponseDto {
     @Exclude()
     land_size: number;
 
-    @Expose({name: 'landSize'})
-    landSize () {
-        return this.landSize ;
+    @Expose({ name: 'landSize' })
+    landSize() {
+        return this.landSize;
     }
 
     image: string;
@@ -53,4 +54,42 @@ export class HomeResponseDto {
     constructor(partial: Partial<HomeResponseDto>) {
         Object.assign(this, partial);
     }
+}
+
+class Image {
+    ulr: string;
+}
+
+export class CreateHomeDto {
+    @IsString()
+    @IsNotEmpty()
+    address: string;
+
+    @IsNumber()
+    @IsPositive()
+    numberOfBedrooms: number;
+
+    @IsNumber()
+    @IsPositive()
+    numberOfBathrooms: number;
+
+    @IsString()
+    @IsNotEmpty()
+    city: string;
+
+    @IsNumber()
+    @IsPositive()
+    price: string;
+
+    @IsNumber()
+    @IsPositive()
+    land_size: number;
+
+    @IsEnum(PropertyType)
+    propertyType: PropertyType;
+
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => Image)
+    images: Image[]
 }
