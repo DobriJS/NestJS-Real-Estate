@@ -1,7 +1,6 @@
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PrismaModule } from 'src/prisma/prisma.module';
-
 import { HomeController } from './home.controller';
 import { HomeService } from './home.service';
 
@@ -13,4 +12,4 @@ import { HomeService } from './home.service';
     useClass: ClassSerializerInterceptor,
   }]
 })
-export class HomeModule {}
+export class HomeModule { }
