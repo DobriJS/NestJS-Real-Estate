@@ -36,13 +36,14 @@ export class HomeController {
         return this.homeService.getHomeById(id);
     }
 
-    @Roles(UserType.REALTOR, UserType.ADMIN)
+    @Roles(UserType.REALTOR)
     @UseGuards(AuthGuard)
     @Post()
     createHome(@Body() body: CreateHomeDto, @User() user: UserInfo) {
-        return/*  this.homeService.createHome(body, user.id) */ 'Created!';
+        return this.homeService.createHome(body, user.id);
     }
 
+    @Roles(UserType.REALTOR)
     @Put(':id')
     async updateHome(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateHomeDto, @User() user: UserInfo) {
         const realtor = await this.homeService.getRealtorByHomeId(id);
@@ -50,6 +51,7 @@ export class HomeController {
         return this.homeService.updateHome(id, body);
     }
 
+    @Roles(UserType.REALTOR)
     @Delete(':id')
     async deleteHome(@Param('id', ParseIntPipe) id: number, @User() user: UserInfo) {
         const realtor = await this.homeService.getRealtorByHomeId(id);
