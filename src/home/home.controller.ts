@@ -42,18 +42,14 @@ export class HomeController {
     @Put(':id')
     async updateHome(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateHomeDto, @User() user: UserInfo) {
         const realtor = await this.homeService.getRealtorByHomeId(id);
-
         if (realtor.id !== user.id) throw new UnauthorizedException();
-
         return this.homeService.updateHome(id, body);
     }
 
     @Delete(':id')
     async deleteHome(@Param('id', ParseIntPipe) id: number, @User() user: UserInfo) {
         const realtor = await this.homeService.getRealtorByHomeId(id);
-
         if (realtor.id !== user.id) throw new UnauthorizedException();
-
         return this.homeService.deleteHomeById(id);
     }
 
