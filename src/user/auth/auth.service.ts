@@ -8,7 +8,7 @@ import { SigninParams } from 'src/interfaces/SigninParams';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly prismaService: PrismaService) {}
+    constructor(private readonly prismaService: PrismaService) { }
 
     async signup({ email, password, phone, name }: SignupParams, userType: UserType) {
         const userExists = await this.prismaService.user.findUnique({
@@ -17,20 +17,20 @@ export class AuthService {
             }
         });
 
-        if (userExists) throw new ConflictException();
+        if (userExists) throw new ConflictException('User with the given email already exists');
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await this.prismaService.user.create({
-           data: {
-            email,
-            password: hashedPassword,
-            phone,
-            name,
-            user_type: userType
-           }
+            data: {
+                email,
+                password: hashedPassword,
+                phone,
+                name,
+                user_type: userType
+            }
         });
 
-       return this.generateJWT(name, user.id);
+        return this.generateJWT(name, user.id);
 
     }
 
@@ -57,10 +57,10 @@ export class AuthService {
             name,
             id
         },
-        process.env.JWT_KEY,
-        {
-            expiresIn: 8600,
-        })
+            process.env.JWT_KEY,
+            {
+                expiresIn: 8600,
+            })
     }
 
     generateProductKey(email: string, userType: UserType) {

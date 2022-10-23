@@ -1,15 +1,21 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { PropertyType, UserType } from '.prisma/client';
 import { Roles } from 'src/decorators/roles.decorator';
-import { User, UserInfo } from 'src/user/decorators/user.decorator';
+import { User } from 'src/user/decorators/user.decorator';
+import { UserInfo } from 'src/interfaces/UserInfo';
 import { CreateHomeDto, HomeResponseDto, UpdateHomeDto } from './dto/home.dto';
 import { HomeService } from './home.service';
+import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 
+
+@ApiTags('home')
 @Controller('home')
 export class HomeController {
     constructor(private readonly homeService: HomeService) { }
 
     @Get()
+    @ApiOperation({ summary: 'Fetch All Homes' })
+    @ApiResponse({ status: 200, description: 'The resources has been fetched.' })
     getHomes(
         @Query('city') city?: string,
         @Query('minPrice') minPrice?: string,
