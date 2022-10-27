@@ -1,4 +1,4 @@
-import { HostParam, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateHomeParams } from 'src/interfaces/CreateHomeParams';
 import { GetHomesParam } from 'src/interfaces/GetHomesParam';
 import { UpdateHomeParams } from 'src/interfaces/UpdateHomeParams';
@@ -40,7 +40,7 @@ export class HomeService {
         });
 
         if (!homes.length) {
-            throw new NotFoundException();
+            throw new NotFoundException('Cannot find the requested resource');
         }
 
         return homes.map(
@@ -74,7 +74,7 @@ export class HomeService {
             },
         });
 
-        if (!home) throw new NotFoundException();
+        if (!home) throw new NotFoundException('Cannot find the requested resource');
         return new HomeResponseDto(home);
     }
 
@@ -105,7 +105,7 @@ export class HomeService {
             }
         });
 
-        if (!home) throw new NotFoundException();
+        if (!home) throw new NotFoundException('Cannot find the requested resource');
 
         const updatedHome = await this.prismaService.home.update({
             where: {
@@ -129,6 +129,10 @@ export class HomeService {
                 id,
             }
         });
+
+        if (!id) {
+            throw new NotFoundException('Cannot find the requested resource');
+        }
     }
 
     async getRealtorByHomeId(id: number) {

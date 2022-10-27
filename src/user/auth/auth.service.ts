@@ -20,6 +20,7 @@ export class AuthService {
         if (userExists) throw new ConflictException('User with the given email already exists');
 
         const hashedPassword = await bcrypt.hash(password, 10);
+
         const user = await this.prismaService.user.create({
             data: {
                 email,
@@ -41,12 +42,12 @@ export class AuthService {
             }
         });
 
-        if (!user) throw new HttpException("Invalid credetials", 400);
+        if (!user) throw new HttpException("Invalid username/password supplied", 400);
 
         const hashedPassword = user.password;
         const isValidPassword = await bcrypt.compare(password, hashedPassword);
 
-        if (!isValidPassword) throw new HttpException("Invalid credetials", 400);
+        if (!isValidPassword) throw new HttpException("Invalid username/password supplied", 400);
 
         return this.generateJWT(user.name, user.id);
 

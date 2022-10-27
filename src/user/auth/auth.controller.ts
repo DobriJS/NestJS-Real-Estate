@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { User } from '../decorators/user.decorator';
 import { UserInfo } from 'src/interfaces/UserInfo';
-import { ApiTags, ApiBearerAuth, ApiQuery, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiQuery, ApiResponse, ApiOperation, ApiCreatedResponse, ApiUnauthorizedResponse, ApiBadRequestResponse, ApiConflictResponse } from '@nestjs/swagger';
 
 @ApiBearerAuth()
 @ApiTags('auth')
@@ -15,24 +15,31 @@ export class AuthController {
 
     @Post('/signup/:userType')
     @ApiQuery({ name: 'userType', enum: UserType })
-    @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
-    @ApiResponse({ status: 401, description: 'You are not Authorized !' })
+    @ApiCreatedResponse({ description: 'Successful operation' })
+    @ApiConflictResponse({ description: 'User with the given email already exists' })
     @ApiOperation({ summary: 'Create new User' })
     async signup(@Body() body: SignupDto, @Param('userType', new ParseEnumPipe(UserType)) userType: UserType) {
 
         if (userType !== UserType.BUYER) {
-            if (!body.productKey) throw new UnauthorizedException();
+            if (!body.productKey) {
+                throw new UnauthorizedException();
+            }
+
             const validProductKey = `${body.email}-${userType}-${process.env.PRODUCT_KEY_SECRET}`;
             const isValidProductKey = await bcrypt.compare(validProductKey, body.productKey);
-            if (!isValidProductKey) throw new UnauthorizedException();
+
+            if (!isValidProductKey) {
+                throw new UnauthorizedException();
+            }
         }
+
         return this.authService.signup(body, userType);
     }
 
     @Post('/signin')
-    @ApiResponse({ status: 201, description: 'The user is successfully logged in !' })
-    @ApiResponse({ status: 400, description: 'Invalid credetials' })
-    @ApiOperation({ summary: 'Log in User' })
+    @ApiCreatedResponse({ description: 'Successful operation' })
+    @ApiBadRequestResponse({ description: 'Invalid username/password supplied' })
+    @ApiOperation({ summary: 'Login User' })
     signin(@Body() body: SigninDto) {
         return this.authService.signin(body);
     }
