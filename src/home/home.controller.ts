@@ -5,7 +5,7 @@ import { User } from 'src/user/decorators/user.decorator';
 import { UserInfo } from 'src/interfaces/UserInfo';
 import { CreateHomeDto, HomeResponseDto, InquireDto, UpdateHomeDto } from './dto/home.dto';
 import { HomeService } from './home.service';
-import { ApiTags, ApiQuery, ApiOperation, ApiCreatedResponse, ApiOkResponse, ApiBearerAuth, ApiNotFoundResponse, ApiBadRequestResponse } from '@nestjs/swagger';
+import { ApiTags, ApiQuery, ApiOperation, ApiCreatedResponse, ApiOkResponse, ApiBearerAuth, ApiNotFoundResponse, ApiBadRequestResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 
 @ApiTags('home')
@@ -84,6 +84,9 @@ export class HomeController {
 
     @Roles(UserType.BUYER)
     @Post('/inquire/:id')
+    @ApiBearerAuth()
+    @ApiCreatedResponse({ description: 'Successful operation' })
+    @ApiOperation({ summary: 'Send messages to the Realtor' })
     inquire(
         @Param('id', ParseIntPipe) homeId: number,
         @User() user: UserInfo,
@@ -94,6 +97,10 @@ export class HomeController {
 
     @Roles(UserType.REALTOR)
     @Get('/messages/:id')
+    @ApiBearerAuth()
+    @ApiOkResponse({ description: 'Successful operation' })
+    @ApiUnauthorizedResponse({ description: 'Not Authorized' })
+    @ApiOperation({ summary: 'Read messages from the Buyer' })
     async getHomeMessages(
         @Param('id', ParseIntPipe) id: number,
         @User() user: UserInfo,

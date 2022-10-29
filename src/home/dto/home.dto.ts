@@ -154,6 +154,11 @@ export class UpdateHomeDto {
 }
 
 export class InquireDto {
+    @ApiProperty({
+        example: {
+            message: "I really like this house!! I want to see it"
+        }
+    })
     @IsString()
     @IsNotEmpty()
     message: string;
