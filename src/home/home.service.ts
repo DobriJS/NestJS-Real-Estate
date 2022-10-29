@@ -6,7 +6,7 @@ import { UserInfo } from 'src/interfaces/UserInfo';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { HomeResponseDto } from './dto/home.dto';
 
-const homeSelect = {
+export const homeSelect = {
     id: true,
     address: true,
     city: true,
